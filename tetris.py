@@ -34,6 +34,7 @@ icon=pygame.image.load('tetris.png')
 pygame.display.set_icon(icon)
 
 #paused and game over logo and score logo
+start_logo = pygame.image.load('tetris_start_logo.jpg')
 paused_logo = pygame.image.load('paused logo.png')
 score_logo = pygame.image.load('scorelogo.png')
 
@@ -236,8 +237,8 @@ def create_grid(grid):
         for i in range(len(grid[j])):
             pygame.draw.rect(screen,colour[grid[j][i]],(top_left_x+(i*25)+3,top_left_y+(j*25)+3,20,20))
 
-def message_to_screen(q,size,colour,x,y):
-    message = pygame.font.Font('freesansbold.ttf',size)
+def message_to_screen(q,size,colour,x,y,style):
+    message = pygame.font.Font(style,size)
     messages = message.render(q,True,colour)
     screen.blit(messages,(x,y))
 
@@ -253,11 +254,14 @@ def frame():
     pygame.draw.rect(screen,dblue,(0,0,350,50))
     pygame.draw.line(screen,yellow,(0,0),(350,0),10)
     pygame.draw.line(screen,yellow,(0,47),(350,47),5)
-    message_to_screen("TETRIS",40,white,100,10)
+    message_to_screen("TETRIS",40,white,100,10,'freesansbold.ttf')
     screen.blit(bg,(350,-110))
     screen.blit(score_logo,(381,125))
-    message_to_screen("SCORE :",23,white,361,225)
-    message_to_screen("LINES :",24,white,361,300)
+    message_to_screen("SCORE :",23,white,361,225,'freesansbold.ttf')
+    message_to_screen("LINES :",24,white,361,300,'freesansbold.ttf')
+    message_to_screen("*Use Ctrl to change shape",15,white,361,53,"C:\Windows\Fonts\Arial.ttf")
+    message_to_screen("*Use arrows to move",15,white,361,70,"C:\Windows\Fonts\Arial.ttf")
+    message_to_screen("*Use Spacebar to pause",15,white,361,87,"C:\Windows\Fonts\Arial.ttf")
     pygame.draw.lines(screen,white,True,((361,250),(550,250),(550,275),(361,275)),1)
     pygame.draw.lines(screen,white,True,((361,325),(550,325),(550,350),(361,350)),1)
 
@@ -268,29 +272,45 @@ def frame():
             if j>25:
                 pygame.draw.line(screen,white,(0,j),(350,j),1)
 
+def pause_frame():
+    pygame.draw.rect(screen,dblue,(0,0,350,50))
+    pygame.draw.line(screen,yellow,(0,0),(350,0),10)
+    pygame.draw.line(screen,yellow,(0,47),(350,47),5)
+    message_to_screen("TETRIS",40,white,100,10,'freesansbold.ttf')
+    screen.blit(bg,(350,-110))
+    screen.blit(score_logo,(381,125))
+    message_to_screen("SCORE :",23,white,361,225,'freesansbold.ttf')
+    message_to_screen("LINES :",24,white,361,300,'freesansbold.ttf')
+    message_to_screen("*Use Ctrl to change shape",15,white,361,53,"C:\Windows\Fonts\Arial.ttf")
+    message_to_screen("*Use arrows to move",15,white,361,70,"C:\Windows\Fonts\Arial.ttf")
+    message_to_screen("*Use Spacebar to pause",15,white,361,87,"C:\Windows\Fonts\Arial.ttf")
+    pygame.draw.lines(screen,white,True,((361,250),(550,250),(550,275),(361,275)),1)
+    pygame.draw.lines(screen,white,True,((361,325),(550,325),(550,350),(361,350)),1)
+    pygame.draw.rect(screen,dblack,(26,50,299,625))
+    pygame.draw.line(screen,yellow,(0,0),(0,700),10)
+    pygame.draw.line(screen,yellow,(350,0),(350,700),5)
+    message_to_screen("PAUSED",64,white,50,250,'freesansbold.ttf')
+    screen.blit(paused_logo,(120,100))
+    message_to_screen("press spacebar to continue",20,white,50,500,'freesansbold.ttf')
+    message_to_screen("press q to quit",20,white,100,532,'freesansbold.ttf')
+    clock.tick(15)
+    pygame.display.update()
 
 def pause():
     paused = True
     while paused:
+        pause_frame()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     pygame.quit()
-                    quit
                 if event.key == pygame.K_SPACE:
                     paused = False
-        frame()
-        pygame.draw.rect(screen,dblack,(26,50,299,625))
-        message_to_screen("PAUSED",64,white,50,250)
-        screen.blit(paused_logo,(120,100))
-        message_to_screen("press spacebar to continue",20,white,50,500)
-        message_to_screen("press q to quit",20,white,100,532)
-        clock.tick(15)
-        pygame.display.update()
-
+                    pygame.draw.rect(screen,dblack,(0,50,350,650))
+        
+        
 def game_over():
     gameover = pygame.font.Font('freesansbold.ttf',45)
     game_overs = gameover.render('GAME OVER',True,white)
@@ -298,8 +318,7 @@ def game_over():
     pygame.draw.rect(screen, dblack, (26, 50, 299, 625))
     screen.blit(game_overs,(35,250))
     screen.blit(paused_logo,(120,100))
-    #message_to_screen("press p to play again", 20, white, 70, 500)
-    message_to_screen("press q to quit", 20, white, 100, 532)
+    message_to_screen("press q to quit", 20, white, 100, 532,'freesansbold.ttf')
     pygame.display.update()
 
 def change_border(grid,m):
@@ -311,6 +330,26 @@ def change_border(grid,m):
                 grid[i][j] = m
     return grid
 
+def start_game():
+    screen.blit(start_logo,(-60,25))
+    pygame.draw.rect(screen,dblue,(0,0,350,50))
+    pygame.draw.line(screen,yellow,(0,0),(350,0),10)
+    pygame.draw.line(screen,yellow,(0,47),(350,47),5)
+    message_to_screen("TETRIS",40,white,100,10,'freesansbold.ttf')
+    screen.blit(bg,(350,-110))
+    screen.blit(score_logo,(381,125))
+    message_to_screen("SCORE :",23,white,361,225,'freesansbold.ttf')
+    message_to_screen("LINES :",24,white,361,300,'freesansbold.ttf')
+    message_to_screen("*Use Ctrl to change shape",15,white,361,53,"C:\Windows\Fonts\Arial.ttf")
+    message_to_screen("*Use arrows to move",15,white,361,70,"C:\Windows\Fonts\Arial.ttf")
+    message_to_screen("*Use Spacebar to pause",15,white,361,87,"C:\Windows\Fonts\Arial.ttf")
+    pygame.draw.lines(screen,white,True,((361,250),(550,250),(550,275),(361,275)),1)
+    pygame.draw.lines(screen,white,True,((361,325),(550,325),(550,350),(361,350)),1)
+    pygame.draw.line(screen,yellow,(0,0),(0,700),10)
+    pygame.draw.line(screen,yellow,(350,0),(350,700),5)
+    message_to_screen('press "s" to start game',20,white,75,590,'freesansbold.ttf')
+    clock.tick(15)
+    pygame.display.update()
 
 # Score
 num_line = 0
@@ -319,6 +358,7 @@ running = True
 game_finish = False
 can_use = True
 delay = 550
+start = True
 
 while running:
     screen.fill(dblack)
@@ -330,9 +370,16 @@ while running:
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_q:
                     pygame.quit()
-                    quit
-
-
+    while start == True:
+        start_game()
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_s:
+                    start = False
+                    pygame.draw.rect(screen,dblack,(0,50,350,650))
+        
     if game.y == 24-game.height+1 :
         game = piece()
         check_grid(grid)
